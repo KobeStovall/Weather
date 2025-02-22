@@ -49,6 +49,23 @@
     </style>
 </head>
 <body>
+    <script>
+        function updateBackground() {
+            const hour = new Date().getHours();
+            let gradient;
+            if (hour >= 6 && hour < 18) {
+                gradient = 'linear-gradient(to bottom, #ff9a9e, #fad0c4)'; // Sunset theme
+            } else {
+                gradient = 'linear-gradient(to bottom, #2c3e50, #4ca1af)'; // Night theme
+            }
+            document.body.style.background = gradient;
+        }
+        window.onload = updateBackground;
+    </script>
+</body>
+</html>
+</head>
+<body>
     <main class="container" role="main">
         <div class="weather-container">
             <h1 class="text-center mb-4" id="app-title">Weather App</h1>
@@ -141,19 +158,37 @@
             $("#feels-like-value").text(`${feelsLike}°F`).attr("aria-label", `Feels like ${feelsLike} degrees Fahrenheit`);
             $("#humidity-value").text(`${humidity}%`).attr("aria-label", `Humidity ${humidity} percent`);
             
-            // Set weather icon and condition text based on weather conditions
-            let iconClass = "bi-cloud";
-            let conditionText = "Cloudy";
+            // Enhanced weather condition mapping
+            let iconClass = "";
+            let conditionText = "";
             
+            // Determine weather condition based on precipitation and cloud cover
             if (precipitation > 0.1) {
-                iconClass = "bi-cloud-rain-fill";
-                conditionText = "Rainy";
-            } else if (cloudCover < 25) {
-                iconClass = "bi-sun";
-                conditionText = "Clear";
-            } else if (cloudCover < 50) {
-                iconClass = "bi-cloud-sun";
-                conditionText = "Partly Cloudy";
+                if (precipitation > 0.3) {
+                    iconClass = "bi-cloud-rain-heavy-fill";
+                    conditionText = "Heavy Rain";
+                } else {
+                    iconClass = "bi-cloud-rain-fill";
+                    conditionText = "Light Rain";
+                }
+            } else {
+                // No precipitation - determine by cloud cover
+                if (cloudCover < 10) {
+                    iconClass = "bi-sun-fill";
+                    conditionText = "Sunny";
+                } else if (cloudCover < 30) {
+                    iconClass = "bi-sun";
+                    conditionText = "Mostly Sunny";
+                } else if (cloudCover < 50) {
+                    iconClass = "bi-cloud-sun-fill";
+                    conditionText = "Partly Cloudy";
+                } else if (cloudCover < 80) {
+                    iconClass = "bi-cloud-sun";
+                    conditionText = "Mostly Cloudy";
+                } else {
+                    iconClass = "bi-clouds-fill";
+                    conditionText = "Cloudy";
+                }
             }
             
             $("#weather-icon").attr("class", `bi ${iconClass} weather-icon`);
@@ -163,6 +198,10 @@
             let locationText = "";
             if (latitude === 40.7128 && longitude === -74.0060) {
                 locationText = "New York City, NY";
+            } else if (latitude === 34.0522 && longitude === -118.2437) {
+                locationText = "Los Angeles, CA";
+            } else if (latitude === 41.8781 && longitude === -87.6298) {
+                locationText = "Chicago, IL";
             } else {
                 locationText = `Location (${latitude.toFixed(2)}, ${longitude.toFixed(2)})`;
             }
